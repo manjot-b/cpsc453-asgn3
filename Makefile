@@ -13,7 +13,7 @@
 
 ##############################################
 # Set up the project-specific options
-EXEC=img_disp
+EXEC=obj_disp
 LIBS=`pkg-config --libs glfw3 gl` -ldl
 
 ##############################################

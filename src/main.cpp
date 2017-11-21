@@ -1,16 +1,22 @@
 #include <glad/glad.h>
 #include <iostream>
-#include "ImageDisplayer.h"
+#include "OBJDisplayer.h"
+#include "objmodel.h"
+#include <string>
+
 using namespace std;
 
 int main(int argc, char *argv[])
 {
-	if (argc != 2)
+	if (argc != 3)
 	{
-		cout << "Usage: " << argv[0] << "<image filename>" << endl;
+		cout << "Usage: " << argv[0] << " <obj> <texture>" << endl;
 		return -1;
 	}
-	ImageDisplayer imgDisplayer(argv[1]);
-	imgDisplayer.run();	
+	//OBJmodel obj;
+	//obj.load( string(argv[1]) );
+	//cout << argv[1] << endl;
+	OBJDisplayer objDisplayer( argv[1], argv[2] );
+	objDisplayer.run();	
 }
 
