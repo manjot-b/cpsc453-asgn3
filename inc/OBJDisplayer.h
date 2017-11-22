@@ -9,6 +9,7 @@
 #include <GLFW/glfw3.h>
 #include "Texture.h"
 #include "Shader.h"
+#include "VertexArray.h"
 #include "objmodel.h"
 #include <vector>
 #include <glm/glm.hpp>
@@ -36,6 +37,7 @@ class OBJDisplayer
         OBJmodel *obj;
         Shader *shader;
         Texture *texture;
+        VertexArray *vertexArray;
         std::vector<float> vertexBuffer;
 
         /*

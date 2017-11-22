@@ -20,13 +20,23 @@ Texture::Texture(const char *filename)
     int width, height, nrChannels;
     stbi_set_flip_vertically_on_load(true);
     unsigned char *data = stbi_load(filename, &width, &height, &nrChannels, 0);
+    cout << nrChannels << endl;
     if (!data)
     {
         cout << "Failed to load texture: " << filename << endl;
     }
     this->width = width;
     this->height = height;
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    switch (nrChannels)
+    {
+        case 3: 
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            break;
+        case 4:
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+            break;     
+         
+    }
     glGenerateMipmap(GL_TEXTURE_2D);
     stbi_image_free(data);
 
