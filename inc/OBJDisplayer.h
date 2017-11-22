@@ -33,19 +33,34 @@ class OBJDisplayer
         */
         int initWindow();
         GLFWwindow *window;
+        
+        struct BoundingBox      // box is a sqare
+        {
+            float x, y, z, length;
+        };
+        BoundingBox boundingBox; 
+        
         GLuint VBO, VAO, EBO;
         OBJmodel *obj;
         Shader *shader;
         Texture *texture;
         VertexArray *vertexArray;
         std::vector<float> vertexBuffer;
+        glm::mat4 perspective;
 
         /*
         *   Process the input made by the user
         */
         void processInput(GLFWwindow *window);
         void adjustAspectRatio();
+
+        /*
+            Extracts all the vertex data from the object
+            and stores it in a float buffer
+        */
         void extractVertexData();
+        void calcBoundingBox();
+        
 };
 
 #endif
