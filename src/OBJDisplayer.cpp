@@ -142,9 +142,9 @@ void OBJDisplayer::processInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		rotY -= rotSpeed;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		rotX += rotSpeed;
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		rotX -= rotSpeed;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		rotX += rotSpeed;
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 		rotZ -= rotSpeed;
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
