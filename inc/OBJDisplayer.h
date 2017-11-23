@@ -49,6 +49,10 @@ class OBJDisplayer
         glm::mat4 perspective;
         glm::mat4 view;
         float rotX, rotY, rotZ, scale;
+        glm::vec3 lightPosition;
+        glm::vec3 lightColor;
+        vector<glm::vec4> lightConstants;
+        float lightConstantsIdx;
 
         /*
         *   Process the input made by the user

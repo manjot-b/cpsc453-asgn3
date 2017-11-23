@@ -6,12 +6,21 @@ layout (location = 2) in vec3 aNormal;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 perspective;
+uniform vec3 lightPosition;
+
 out vec2 texCoord;
+out vec3 surfaceNormal;
+out vec3 toLight;
+out vec3 toCamera;
 
 void main()
 {
-	//vec4 trans = modelView * vec4(aPos, 1.0f);
-	//gl_Position = vec4(trans.xyz, 1/scale);
-	gl_Position = perspective * view * model * vec4(aPosition, 1.0);
+	vec4 worldPosition = model * vec4(aPosition, 1.0);
+	gl_Position = perspective * view * worldPosition;
 	texCoord = aTexture;
+
+	surfaceNormal  = (model * vec4(aNormal, 0.0f)).xyz;
+	toLight = lightPosition - worldPosition.xyz;
+
+	toCamera = (inverse(view) * vec4(0, 0, 0, 1)).xyz;
 }

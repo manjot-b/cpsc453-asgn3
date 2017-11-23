@@ -28,6 +28,9 @@ class Shader
 		bool link();
 		void setUniform1i(const char *uniform, int value);
 		void setUniformMatrix4fv(const char *uniform, const glm::mat4 &matrix);
+		void setUniform3fv(const char *uniform, const glm::vec3 &vec);
+		void setUniform4fv(const char *uniform, const glm::vec4 &vec);
+		void setUniform1f(const char *uniform, float value);
 	
 	private:
 		GLuint ID;

@@ -15,7 +15,8 @@
 using namespace std;
 
 OBJDisplayer::OBJDisplayer(const char *objPath, const char *texPath) :
-rotX(glm::radians(360.0f)), rotY(glm::radians(360.0f)), rotZ(glm::radians(360.0f))
+rotX(glm::radians(360.0f)), rotY(glm::radians(360.0f)), rotZ(glm::radians(360.0f)),
+lightPosition(-10.0f, 10.0f, 5.0f), lightColor(1.0f, 1.0f, 1.0f), lightConstantsIdx(0)
 {
 	obj = new OBJmodel();
 	obj->load(objPath);
@@ -43,7 +44,14 @@ rotX(glm::radians(360.0f)), rotY(glm::radians(360.0f)), rotZ(glm::radians(360.0f
 			glm::vec3(0, 1, 0)				// up vector
 		);
 	perspective = glm::perspective(glm::radians(45.0f), (float)800 / 800, 0.1f, 100.0f);
-	
+
+	lightConstants = {
+				// ambient	diffues		specular	shininess
+		glm::vec4(0.329412f, 0.780392f, 0.992157f, 27.8974f),	// brass
+		glm::vec4(0.05375f, 0.18275f, 0.332741f, 38.4f),		// obsidian
+		glm::vec4(0.1745f, 0.61424f, 0.727811f, 76.8f),			// ruby
+		glm::vec4(0.0f, 0.01f, 0.50f, 32.0f)					// black
+	};	
 }
 
 OBJDisplayer::~OBJDisplayer()
@@ -111,6 +119,9 @@ int OBJDisplayer::run()
 		shader->setUniformMatrix4fv("model", model);
 		shader->setUniformMatrix4fv("view", view);
 		shader->setUniformMatrix4fv("perspective", perspective);
+		shader->setUniform3fv("lightPosition", lightPosition);
+		shader->setUniform3fv("lightColor", lightColor);
+		shader->setUniform4fv("lightConstants", lightConstants[lightConstantsIdx]);
 
 		glBindVertexArray(vertexArray->getID());
 		glActiveTexture(GL_TEXTURE0);
@@ -152,8 +163,16 @@ void OBJDisplayer::processInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
 		scale *= scaleSpeed;
 	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
-		scale /= scaleSpeed;	
-								
+		scale /= scaleSpeed;
+	
+	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
+		lightConstantsIdx = 0;
+	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+		lightConstantsIdx = 1;
+	if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
+		lightConstantsIdx = 2;
+	if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
+		lightConstantsIdx = 3;							
 }
 
 void OBJDisplayer::extractVertexData()

@@ -96,9 +96,24 @@ void Shader::setUniform1i(const char *uniform, int value)
 	GLint uniformLocation = glGetUniformLocation(ID, uniform);
 	glUniform1i(uniformLocation, value);
 }
+void Shader::setUniform1f(const char *uniform, float value)
+{
+	GLint uniformLocation = glGetUniformLocation(ID, uniform);
+	glUniform1f(uniformLocation, value);
+}
 void Shader::setUniformMatrix4fv(const char *uniform, const glm::mat4 &matrix)
 {
 	GLint uniformLocation = glGetUniformLocation(ID, uniform);
 	glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(matrix));
+}
+void Shader::setUniform3fv(const char *uniform, const glm::vec3 &vec)
+{
+	GLint uniformLocation = glGetUniformLocation(ID, uniform);
+	glUniform3fv(uniformLocation, 1, glm::value_ptr(vec));
+}
+void Shader::setUniform4fv(const char *uniform, const glm::vec4 &vec)
+{
+	GLint uniformLocation = glGetUniformLocation(ID, uniform);
+	glUniform4fv(uniformLocation, 1, glm::value_ptr(vec));
 }
 GLuint Shader::getProgramID() { return ID; }
