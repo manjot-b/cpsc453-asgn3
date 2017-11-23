@@ -8,17 +8,20 @@
 #include "objmodel.h"
 #include <string>
 #include <algorithm>
+#include <cmath>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/string_cast.hpp>
 using namespace std;
 
-OBJDisplayer::OBJDisplayer(const char *objPath, const char *texPath)
+OBJDisplayer::OBJDisplayer(const char *objPath, const char *texPath) :
+rotX(glm::radians(360.0f)), rotY(glm::radians(360.0f)), rotZ(glm::radians(360.0f))
 {
 	obj = new OBJmodel();
 	obj->load(objPath);
 	extractVertexData();
 	calcBoundingBox();
+	scale = 1 / boundingBox.length;
 	
 	initWindow();
 	//adjustAspectRatio(); 
@@ -34,7 +37,13 @@ OBJDisplayer::OBJDisplayer(const char *objPath, const char *texPath)
 	size_t vertCompSize = sizeof(vertexComps) / sizeof(int);
 	vertexArray = new VertexArray(vertexComps, vertCompSize, vertexBuffer.data(), vertexBuffer.size());
 
+	view = glm::lookAt(
+			glm::vec3(0.0f, 2.0f, 3.0f),	// camera position
+			glm::vec3(0, 0, 0),				// where camera is lookin
+			glm::vec3(0, 1, 0)				// up vector
+		);
 	perspective = glm::perspective(glm::radians(45.0f), (float)800 / 800, 0.1f, 100.0f);
+	
 }
 
 OBJDisplayer::~OBJDisplayer()
@@ -91,10 +100,12 @@ int OBJDisplayer::run()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glm::mat4 model(1.0f);
-		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-		model = glm::translate(model, glm::vec3(0.0f, -0.06f, -0.2f));
-		glm::mat4 view(1.0f);
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(scale, scale, scale));
+		model = glm::translate(model, glm::vec3(0, -boundingBox.length / 2, -boundingBox.length / 2));		
+		model = glm::rotate(model, rotX, glm::vec3(1, 0, 0));
+		model = glm::rotate(model, rotY, glm::vec3(0, 1, 0));
+		model = glm::rotate(model, rotZ, glm::vec3(0, 0, 1));
+		
 		// DRAW IMAGE AS A TEXTURE
 		glUseProgram(shader->getProgramID());		
 		shader->setUniformMatrix4fv("model", model);
@@ -121,7 +132,27 @@ int OBJDisplayer::run()
 
 void OBJDisplayer::processInput(GLFWwindow *window)
 {
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
 	
+	float rotSpeed = glm::radians(3.0f);
+	float scaleSpeed = 1.01f;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		rotY += rotSpeed;
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		rotY -= rotSpeed;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		rotX += rotSpeed;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		rotX -= rotSpeed;
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+		rotZ -= rotSpeed;
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		rotZ += rotSpeed;
+	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
+		scale *= scaleSpeed;
+	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
+		scale /= scaleSpeed;	
 								
 }
 
@@ -173,13 +204,16 @@ void OBJDisplayer::calcBoundingBox()
 			
 		}
 	}
-	float length = max( (maxX - minX), max( (maxY - minY), (maxZ - minZ) ) );
+	float length = max( abs(maxX - minX), max( abs(maxY - minY), abs(maxZ - minZ) ) );
 	boundingBox.x = minX;
 	boundingBox.y = minY;
 	boundingBox.z = maxZ;
 	boundingBox.length = length;
 
-	cout <<  minX << " " << minY << " " << maxZ << " " << length << endl;
+	cout <<  "minX " << minX << "	maxX " << maxX << endl
+		<<  "minY " << minY << "	maxY " << maxY << endl
+		<<  "minZ " << minZ << "	maxZ " << maxZ << endl
+		<< "length " << length;
 }
 
 void OBJDisplayer::adjustAspectRatio()

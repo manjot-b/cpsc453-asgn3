@@ -47,6 +47,8 @@ class OBJDisplayer
         VertexArray *vertexArray;
         std::vector<float> vertexBuffer;
         glm::mat4 perspective;
+        glm::mat4 view;
+        float rotX, rotY, rotZ, scale;
 
         /*
         *   Process the input made by the user
