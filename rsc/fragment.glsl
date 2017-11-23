@@ -41,6 +41,9 @@ void main()
 	vec3 specular = dampedFactor * specularConstant * lightColor;
 
 	vec3 totalLight = ambient + diffuse + specular;
-	fragColor = vec4(totalLight, 1.0) * texture(texture1, texCoord);
+	//fragColor = vec4(totalLight, 1.0) * texture(texture1, texCoord);
+	
+	float greyVal = (texture(texture1, texCoord)).x;
+	fragColor = vec4(greyVale, greyVal, greyVal, 1.0);
 }
 

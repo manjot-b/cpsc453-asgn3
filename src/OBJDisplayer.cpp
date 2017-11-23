@@ -16,7 +16,7 @@ using namespace std;
 
 OBJDisplayer::OBJDisplayer(const char *objPath, const char *texPath) :
 rotX(glm::radians(360.0f)), rotY(glm::radians(360.0f)), rotZ(glm::radians(360.0f)),
-lightPosition(-10.0f, 10.0f, 5.0f), lightColor(1.0f, 1.0f, 1.0f), lightConstantsIdx(0)
+lightPosition(-10.0f, 10.0f, 0.0f), lightColor(1.0f, 1.0f, 1.0f), lightConstantsIdx(0)
 {
 	obj = new OBJmodel();
 	obj->load(objPath);
@@ -48,8 +48,8 @@ lightPosition(-10.0f, 10.0f, 5.0f), lightColor(1.0f, 1.0f, 1.0f), lightConstants
 	lightConstants = {
 				// ambient	diffues		specular	shininess
 		glm::vec4(0.329412f, 0.780392f, 0.992157f, 27.8974f),	// brass
-		glm::vec4(0.05375f, 0.18275f, 0.332741f, 38.4f),		// obsidian
 		glm::vec4(0.1745f, 0.61424f, 0.727811f, 76.8f),			// ruby
+		glm::vec4(0.05375f, 0.18275f, 0.332741f, 38.4f),		// obsidian
 		glm::vec4(0.0f, 0.01f, 0.50f, 32.0f)					// black
 	};	
 }
@@ -229,10 +229,10 @@ void OBJDisplayer::calcBoundingBox()
 	boundingBox.z = maxZ;
 	boundingBox.length = length;
 
-	cout <<  "minX " << minX << "	maxX " << maxX << endl
+/*	cout <<  "minX " << minX << "	maxX " << maxX << endl
 		<<  "minY " << minY << "	maxY " << maxY << endl
 		<<  "minZ " << minZ << "	maxZ " << maxZ << endl
-		<< "length " << length;
+		<< "length " << length;*/
 }
 
 void OBJDisplayer::adjustAspectRatio()
