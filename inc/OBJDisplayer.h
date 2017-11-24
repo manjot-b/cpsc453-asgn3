@@ -18,7 +18,7 @@
 class OBJDisplayer
 {
     public: 
-        OBJDisplayer(const char *objPath, const char *texPath);
+        OBJDisplayer(const char *objPath, const char *texPath, const char *aoPath);
         ~OBJDisplayer();
         
         /*
@@ -44,6 +44,7 @@ class OBJDisplayer
         OBJmodel *obj;
         Shader *shader;
         Texture *texture;
+        Texture *aoMap;
         VertexArray *vertexArray;
         std::vector<float> vertexBuffer;
         glm::mat4 perspective;
@@ -53,6 +54,7 @@ class OBJDisplayer
         glm::vec3 lightColor;
         vector<glm::vec4> lightConstants;
         float lightConstantsIdx;
+        bool renderTexture, renderAOMap, T_KeyHeld, Y_KeyHeld;
 
         /*
         *   Process the input made by the user

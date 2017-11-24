@@ -14,9 +14,10 @@
 #include <glm/gtx/string_cast.hpp>
 using namespace std;
 
-OBJDisplayer::OBJDisplayer(const char *objPath, const char *texPath) :
+OBJDisplayer::OBJDisplayer(const char *objPath, const char *texPath, const char *aoPath) :
 rotX(glm::radians(360.0f)), rotY(glm::radians(360.0f)), rotZ(glm::radians(360.0f)),
-lightPosition(-10.0f, 10.0f, 0.0f), lightColor(1.0f, 1.0f, 1.0f), lightConstantsIdx(0)
+lightPosition(-10.0f, 10.0f, 10.0f), lightColor(1.0f, 1.0f, 1.0f), lightConstantsIdx(0),
+renderTexture(false), renderAOMap(false), T_KeyHeld(false), Y_KeyHeld(false)
 {
 	obj = new OBJmodel();
 	obj->load(objPath);
@@ -28,8 +29,14 @@ lightPosition(-10.0f, 10.0f, 0.0f), lightColor(1.0f, 1.0f, 1.0f), lightConstants
 	//adjustAspectRatio(); 
 	shader = new Shader("rsc/vertex.glsl", "rsc/fragment.glsl");
 	shader->link();
+
+	glUseProgram(shader->getProgramID());
+	shader->setUniform1i("modelTexture", 0);
+	shader->setUniform1i("aoMap", 1);
 	
 	texture = new Texture(texPath);
+	aoMap = new Texture(aoPath);
+
 	int vertexComps[] = {
 		3,	// position components
 		2,	// texture components
@@ -122,13 +129,17 @@ int OBJDisplayer::run()
 		shader->setUniform3fv("lightPosition", lightPosition);
 		shader->setUniform3fv("lightColor", lightColor);
 		shader->setUniform4fv("lightConstants", lightConstants[lightConstantsIdx]);
+		shader->setUniform1i("renderTexture", renderTexture);
+		shader->setUniform1i("renderAOMap", renderAOMap);
 
 		glBindVertexArray(vertexArray->getID());
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture->getID());
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, aoMap->getID());
 
 
-		glDrawArrays(GL_TRIANGLES, 0, obj->triangleCount() * 3);
+		glDrawArrays(GL_TRIANGLES, 0, obj->triangleCount() * 3);	// 3 vertices per triangle
 		
 		glBindVertexArray(0);
 		
@@ -172,7 +183,23 @@ void OBJDisplayer::processInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
 		lightConstantsIdx = 2;
 	if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
-		lightConstantsIdx = 3;							
+		lightConstantsIdx = 3;	
+
+	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_RELEASE)
+		T_KeyHeld = false;
+	if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_RELEASE)
+		Y_KeyHeld = false;
+		
+	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS && !T_KeyHeld)
+	{
+		renderTexture = !renderTexture;
+		T_KeyHeld = true;
+	}	
+	if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS && !Y_KeyHeld)
+	{
+		renderAOMap = !renderAOMap;		
+		Y_KeyHeld = true;
+	}
 }
 
 void OBJDisplayer::extractVertexData()

@@ -20,14 +20,12 @@ Texture::Texture(const char *filename)
     int width, height, nrChannels;
     stbi_set_flip_vertically_on_load(true);
     unsigned char *data = stbi_load(filename, &width, &height, &nrChannels, 0);
-    cout << nrChannels << endl;
     if (!data)
     {
         cout << "Failed to load texture: " << filename << endl;
     }
     this->width = width;
     this->height = height;
-    cout << nrChannels << endl;
     switch (nrChannels)
     {
         case 1: 
