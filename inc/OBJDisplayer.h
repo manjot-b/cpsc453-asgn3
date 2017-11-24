@@ -36,7 +36,7 @@ class OBJDisplayer
         
         struct BoundingBox      // box is a sqare
         {
-            float x, y, z, length;
+            float x, y, z, width, height, depth;
         };
         BoundingBox boundingBox; 
         

@@ -12,6 +12,8 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/string_cast.hpp>
+#include <glm/gtx/euler_angles.hpp>
+
 using namespace std;
 
 OBJDisplayer::OBJDisplayer(const char *objPath, const char *texPath, const char *aoPath) :
@@ -23,7 +25,7 @@ renderTexture(false), renderAOMap(false), T_KeyHeld(false), Y_KeyHeld(false)
 	obj->load(objPath);
 	extractVertexData();
 	calcBoundingBox();
-	scale = 1 / boundingBox.length;
+	scale = 1 / max( boundingBox.width, max (boundingBox.height, boundingBox.depth) );
 	
 	initWindow();
 	//adjustAspectRatio(); 
@@ -115,12 +117,16 @@ int OBJDisplayer::run()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glm::mat4 model(1.0f);
+		float xTrans = -boundingBox.x - (boundingBox.width / 2);
+		float yTrans = -boundingBox.y - (boundingBox.height / 2);
+		float zTrans = -boundingBox.z + (boundingBox.depth / 2);
 		model = glm::scale(model, glm::vec3(scale, scale, scale));
-		model = glm::translate(model, glm::vec3(0, -boundingBox.length / 2, -boundingBox.length / 2));		
-		model = glm::rotate(model, rotX, glm::vec3(1, 0, 0));
-		model = glm::rotate(model, rotY, glm::vec3(0, 1, 0));
-		model = glm::rotate(model, rotZ, glm::vec3(0, 0, 1));
-		
+		//model = glm::rotate(model, rotX, glm::vec3(1, 0, 0));
+		//model = glm::rotate(model, rotY, glm::vec3(0, 1, 0));
+		//model = glm::rotate(model, rotZ, glm::vec3(0, 0, 1));
+		model = model * glm::eulerAngleXYZ(rotX, rotY, rotZ);
+		model = glm::translate(model, glm::vec3(xTrans, yTrans, zTrans));		
+				
 		// DRAW IMAGE AS A TEXTURE
 		glUseProgram(shader->getProgramID());		
 		shader->setUniformMatrix4fv("model", model);
@@ -250,11 +256,13 @@ void OBJDisplayer::calcBoundingBox()
 			
 		}
 	}
-	float length = max( abs(maxX - minX), max( abs(maxY - minY), abs(maxZ - minZ) ) );
+	//float length = max( abs(maxX - minX), max( abs(maxY - minY), abs(maxZ - minZ) ) );
 	boundingBox.x = minX;
 	boundingBox.y = minY;
 	boundingBox.z = maxZ;
-	boundingBox.length = length;
+	boundingBox.width = abs(maxX - minX);
+	boundingBox.height = abs(maxY - minY);
+	boundingBox.depth = abs(maxZ - minZ);
 
 /*	cout <<  "minX " << minX << "	maxX " << maxX << endl
 		<<  "minY " << minY << "	maxY " << maxY << endl
